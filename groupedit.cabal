@@ -1,0 +1,25 @@
+name:           groupedit
+version:        0.1.1
+synopsis:       A server that manages connections during group editing.
+homepage:       https://github.com/Strifepad/groupedit
+license:        AGPL
+license-file:   LICENSE.txt
+author:         Lokathor
+maintainer:     zefria@gmail.com
+category:       Web
+build-type:     Simple
+cabal-version:  >=1.10
+
+executable groupedit
+    hs-source-dirs:     src
+    main-is:            Main.hs
+    -- other-modules:      --
+    default-language:   Haskell2010
+    ghc-options:        -threaded -rtsopts -with-rtsopts=-N -O
+    build-depends:      base,
+                        websockets,
+                        stm,
+                        stm-containers,
+                        async,
+                        mtl,
+                        text
