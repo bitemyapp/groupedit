@@ -137,8 +137,8 @@ editSeq s (Delete i) = case i of
     _ -> let (before, after) = Se.splitAt (i-1) s in before Se.>< (Se.drop 1 after)
 
 -- | Applies a list of edits to the lines of a ServerRoom, giving the new ServerRoom.
-applyEdits :: [EditOp] -> ServerRoom -> ServerRoom
-applyEdits edits room@(ServerRoom {getRoomLines=lines}) = room{getRoomLines=foldl' editSeq lines edits}
+editRoom :: [EditOp] -> ServerRoom -> ServerRoom
+editRoom edits room@(ServerRoom {getRoomLines=lines}) = room{getRoomLines=foldl' editSeq lines edits}
 
 {-| Given a ServerRoom, produce the Text that, if passed to parseOps, would parse into
 the EditOp list required to turn a blank room's lines into the given room's lines.
@@ -204,3 +204,8 @@ broadcast ac roomName message server = do
     case maybeRoom of
         Nothing -> return () -- It's probably an error of some sort if you actually hit this case.
         Just room -> mapM_ (bufferLine message) (getRoomClients room)
+
+{-| Given a list of edits, applies them to the room's lines.
+-}
+editServer :: ActiveClient -> Text -> [EditOp] -> ServerState -> STM ()
+editServer ac roomName edits server = M.focus (adjustM $ return . (editRoom edits)) roomName server
