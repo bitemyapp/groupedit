@@ -217,7 +217,7 @@ broadcast ac roomName message server = do
     maybeRoom <- M.lookup roomName server
     case maybeRoom of
         Nothing -> return () -- It's probably an error of some sort if you actually hit this case.
-        Just room -> mapM_ (bufferLine message) (getRoomClients room)
+        Just room -> mapM_ (bufferLine message) (filter (/= ac) (getRoomClients room))
 
 {-| Given a list of edits, applies them to the room's lines.
 -}

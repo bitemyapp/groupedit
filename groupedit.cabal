@@ -14,7 +14,8 @@ cabal-version:  >=1.10
 executable groupedit
     hs-source-dirs:     src
     main-is:            Main.hs
-    other-modules:      Groupedit.Data
+    other-modules:      Groupedit.Data,
+                        Groupedit.WebSockets
     default-language:   Haskell2010
     other-extensions:   OverloadedStrings
     ghc-options:        -threaded -rtsopts -with-rtsopts=-N -O
