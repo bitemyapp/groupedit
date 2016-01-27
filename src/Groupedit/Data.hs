@@ -61,6 +61,9 @@ instance Ord ActiveClient where
 instance Show ActiveClient where
     show ac = "ActiveClient<" ++ show (getActiveUsername ac) ++ ">"
 
+{-| Given most of the parts to make an ActiveClient, generates a
+Unique value and then sticks it all together.
+-}
 mkActiveClient :: WS.Connection -> TChan Text -> ClientInfo -> IO ActiveClient
 mkActiveClient conn chan info = do
     u <- newUnique
@@ -71,6 +74,7 @@ mkActiveClient conn chan info = do
         getActiveChannel = chan,
         getActiveConnection = conn}
 
+-- | Buffers a line into the client's channel.
 bufferLine :: Text -> ActiveClient -> STM ()
 bufferLine line ac = writeTChan (getActiveChannel ac) line
 
