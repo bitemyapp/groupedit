@@ -207,5 +207,5 @@ broadcast ac roomName message server = do
 
 {-| Given a list of edits, applies them to the room's lines.
 -}
-editServer :: ActiveClient -> Text -> [EditOp] -> ServerState -> STM ()
-editServer ac roomName edits server = M.focus (adjustM $ return . (editRoom edits)) roomName server
+editServer :: Text -> [EditOp] -> ServerState -> STM ()
+editServer roomName edits server = M.focus (adjustM $ return . (editRoom edits)) roomName server
