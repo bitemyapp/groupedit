@@ -61,16 +61,26 @@ instance Ord ActiveClient where
 instance Show ActiveClient where
     show ac = "ActiveClient<" ++ show (getActiveUsername ac) ++ ">"
 
+mkActiveClient :: WS.Connection -> TChan Text -> ClientInfo -> IO ActiveClient
+mkActiveClient conn chan info = do
+    u <- newUnique
+    return $ ActiveClient {
+        getActiveUID = u,
+        getActiveSiteID = (getInfoSiteID info),
+        getActiveUsername = (getInfoUsername info),
+        getActiveChannel = chan,
+        getActiveConnection = conn}
+
 bufferLine :: Text -> ActiveClient -> STM ()
 bufferLine line ac = writeTChan (getActiveChannel ac) line
 
 {-| An eternal loop that reads from the out-channel and then sends those
 message into the websocket. Run this using withAsync for an easy time.
 -}
-lineSender :: ActiveClient -> IO loop
-lineSender ac = forever $ do
-    line <- atomically $ readTChan (getActiveChannel ac)
-    try $ WS.sendTextData (getActiveConnection ac) line :: IO (Either WS.ConnectionException ())
+lineSender :: WS.Connection -> TChan Text -> IO loop
+lineSender conn chan = forever $ do
+    line <- atomically $ readTChan chan
+    try $ WS.sendTextData conn line :: IO (Either WS.ConnectionException ())
 
 -- -- -- -- -- -- -- -- -- --
 -- ServerRoom Section
